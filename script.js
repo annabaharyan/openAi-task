@@ -1,20 +1,21 @@
 import * as dotenv from "dotenv";
-dotenv.config();
-import { ChatGPTAPI } from "chatgpt";
+import { Configuration, OpenAIApi } from "openai";
 import fs from "fs";
+dotenv.config();
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
 fs.readFile("./index.txt", "utf8", async (err, data) => {
   if (err) {
     console.error(err);
     return;
   }
-  const res = await typeGPTAnswer(data);
-  console.log(res);
-});
-
-async function typeGPTAnswer(text) {
-  const api = new ChatGPTAPI({
-    apiKey: process.env.OPENAI_API_KEY,
+  const completion = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: `${data}`,
   });
-  const res = await api.sendMessage(text);
-  return res.detail.choices[0].message.content;
-}
+  console.log(completion.data.choices[0].text);
+});
