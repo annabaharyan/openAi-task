@@ -13,9 +13,10 @@ fs.readFile("./index.txt", "utf8", async (err, data) => {
     console.error(err);
     return;
   }
-  const completion = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: `${data}`,
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [{role: "user", content: `${data}`}],
   });
-  console.log(completion.data.choices[0].text);
+  console.log(completion.data.choices[0].message);
+  
 });
